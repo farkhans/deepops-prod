@@ -1,5 +1,5 @@
 ---
-- include: ../container/docker.yml
+- import_playbook: ../container/docker.yml
 
 - hosts: "{{ hostlist | default('all') }}"
   become: yes

@@ -12,8 +12,8 @@ SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
 ROOT_DIR="${SCRIPT_DIR}/.."
 
 # Configuration
-ANSIBLE_VERSION="${ANSIBLE_VERSION:-4.8.0}"     # Ansible version to install
-ANSIBLE_TOO_NEW="${ANSIBLE_TOO_NEW:-5.0.0}"    # Ansible version too new
+ANSIBLE_VERSION="${ANSIBLE_VERSION:-11.2.0}"     # Ansible version to install
+ANSIBLE_TOO_NEW="${ANSIBLE_TOO_NEW:-12.0.0}"    # Ansible version too new
 ANSIBLE_LINT_VERSION="${ANSIBLE_LINT_VERSION:-5.4.0}"
 CONFIG_DIR="${CONFIG_DIR:-${ROOT_DIR}/config}"            # Default configuration directory location
 DEEPOPS_TAG="${1:-master}"                      # DeepOps branch to set up
@@ -110,17 +110,32 @@ if command -v virtualenv &> /dev/null ; then
 	fi
     fi
 
+    echo "installing ansible"
+
+    # as_user "${PIP} install -q --upgrade \
+    #     ansible==${ANSIBLE_VERSION} \
+	# ansible-lint==${ANSIBLE_LINT_VERSION} \
+    #     Jinja2==${JINJA2_VERSION} \
+    #     netaddr \
+    #     ruamel.yaml \
+    #     PyMySQL \
+    #     paramiko \
+    #     jmespath==${JMESPATH_VERSION} \
+    #     MarkupSafe==${MARKUPSAFE_VERSION} \
+    #     selinux"
+
     as_user "${PIP} install -q --upgrade \
-        ansible==${ANSIBLE_VERSION} \
-	ansible-lint==${ANSIBLE_LINT_VERSION} \
-        Jinja2==${JINJA2_VERSION} \
+        ansible \
+        ansible-lint \
+        Jinja2 \
         netaddr \
         ruamel.yaml \
         PyMySQL \
         paramiko \
-        jmespath==${JMESPATH_VERSION} \
-        MarkupSafe==${MARKUPSAFE_VERSION} \
+        jmespath \
+        MarkupSafe \
         selinux"
+
 else
     echo "ERROR: Unable to create Python virtual environment, 'virtualenv' command not found"
     exit 1

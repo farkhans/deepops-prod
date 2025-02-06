@@ -31,17 +31,18 @@
       package:
         name:
         - python3-setuptools
+        - python3-passlib
         - python3-pip
         state: present
       when: ansible_python.version.major == 3
 
-    - name: install epel on EL7
+    - name: install epel on EL7 (skipped)
       package:
         name: epel-release
         state: present
       when: (ansible_python.version.major == 2) and (ansible_os_family == "RedHat") and (ansible_distribution_major_version == "7")
 
-    - name: install python 2 libraries on EL7
+    - name: install python 2 libraries on EL7 (skipped)
       package:
         name:
         - python-setuptools
