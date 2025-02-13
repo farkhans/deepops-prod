@@ -134,7 +134,9 @@ if command -v virtualenv &> /dev/null ; then
         paramiko \
         jmespath \
         MarkupSafe \
+        python-passlib \
         selinux"
+# Ensure passlib or python-passlib
 
 else
     echo "ERROR: Unable to create Python virtual environment, 'virtualenv' command not found"

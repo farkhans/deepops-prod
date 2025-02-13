@@ -43,23 +43,23 @@
 # Install NVIDIA CUDA Toolkit
 #   Note: the CUDA playbook also installs the driver, so we pass the
 #   appropriate flag to this playbook as well.
-- import_playbook: nvidia-software/nvidia-cuda.yml
-  vars:
-     cuda_playbook_install_driver: "{{ slurm_cluster_install_nvidia_driver }}"
-  when: slurm_cluster_install_cuda|default(true)
+# - import_playbook: nvidia-software/nvidia-cuda.yml
+#   vars:
+#      cuda_playbook_install_driver: "{{ slurm_cluster_install_nvidia_driver }}"
+#   when: slurm_cluster_install_cuda|default(true)
 
 # Install software
 - import_playbook: generic/software.yml
 
 # Set up NFS filesystem
-- import_playbook: generic/nfs-server.yml
-  vars:
-    hostlist: "{{ nfs_server_group | default('slurm-nfs[0]') }}"
-  when: slurm_enable_nfs_server
-- import_playbook: generic/nfs-client.yml
-  vars:
-    hostlist: "{{ nfs_client_group | default('slurm-nfs-client') }}"
-  when: slurm_enable_nfs_client_nodes
+# - import_playbook: generic/nfs-server.yml
+#   vars:
+#     hostlist: "{{ nfs_server_group | default('slurm-nfs[0]') }}"
+#   when: slurm_enable_nfs_server
+# - import_playbook: generic/nfs-client.yml
+#   vars:
+#     hostlist: "{{ nfs_client_group | default('slurm-nfs-client') }}"
+#   when: slurm_enable_nfs_client_nodes
 
 # Install DCGM
 - import_playbook: nvidia-software/nvidia-dcgm.yml hostlist=slurm-node
