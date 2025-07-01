@@ -9,14 +9,14 @@
 - import_playbook: bootstrap/bootstrap-sudo.yml
 
 # Disable cloud-init
-- import_playbook: generic/disable-cloud-init.yml
-  when: deepops_disable_cloud_init
+# - import_playbook: generic/disable-cloud-init.yml
+#   when: deepops_disable_cloud_init
 
 # Configure hostnames, /etc/hosts
-- import_playbook: generic/hosts.yml
-  when: "{{ slurm_configure_etc_hosts | default(true) }}"
-  tags:
-  - set-etc-hosts
+# - import_playbook: generic/hosts.yml
+#   when: "{{ slurm_configure_etc_hosts | default(true) }}"
+#   tags:
+#   - set-etc-hosts
 
 # Configure Chrony (NTP) sync
 - import_playbook: generic/chrony-client.yml
@@ -62,29 +62,29 @@
 #   when: slurm_enable_nfs_client_nodes
 
 # Install DCGM
-- import_playbook: nvidia-software/nvidia-dcgm.yml hostlist=slurm-node
-  when: install_dcgm|default(false)
+# - import_playbook: nvidia-software/nvidia-dcgm.yml hostlist=slurm-node
+#   when: install_dcgm|default(false)
 
 # Install Node Health Check
-# - import_playbook: slurm-cluster/nhc.yml hostlist=slurm-node
-#   when: slurm_install_nhc|default(false)
+- import_playbook: slurm-cluster/nhc.yml hostlist=slurm-node
+  when: slurm_install_nhc|default(false)
 
 # Install Slurm
 - import_playbook: slurm-cluster/slurm.yml
 
 # Install OpenMPI
-- import_playbook: slurm-cluster/openmpi.yml
-  when: slurm_cluster_install_openmpi|default(true)
+# - import_playbook: slurm-cluster/openmpi.yml
+#   when: slurm_cluster_install_openmpi|default(true)
 
 # Install Lmod
-- import_playbook: slurm-cluster/lmod.yml
-  when: slurm_install_lmod
+# - import_playbook: slurm-cluster/lmod.yml
+#   when: slurm_install_lmod
 
 # Install the NVIDIA HPC SDK
-- import_playbook: nvidia-software/nvidia-hpc-sdk.yml
-  vars:
-    hostlist: "{{ sm_install_host | default('slurm-login[0]')}}"
-  when: slurm_install_hpcsdk
+# - import_playbook: nvidia-software/nvidia-hpc-sdk.yml
+#   vars:
+#     hostlist: "{{ sm_install_host | default('slurm-login[0]')}}"
+#   when: slurm_install_hpcsdk
 
 # Install monitoring services
 # - import_playbook: slurm-cluster/prometheus.yml
@@ -121,8 +121,8 @@
   when: slurm_enable_rsyslog_client|default(true)
 
 # Install Singularity
-- import_playbook: container/singularity.yml
-  when: slurm_cluster_install_singularity|default(true)
+# - import_playbook: container/singularity.yml
+#   when: slurm_cluster_install_singularity|default(true)
 
 # Install Open OnDemand
 # - import_playbook: slurm-cluster/open-ondemand.yml
@@ -141,6 +141,6 @@
     - pyxis
 
 # Ensure that nv_peer_mem is loaded
-- import_playbook: nvidia-software/nvidia-peer-memory.yml
-  tags:
-    - nvidia-peer-memory
+# - import_playbook: nvidia-software/nvidia-peer-memory.yml
+#   tags:
+#     - nvidia-peer-memory

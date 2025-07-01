@@ -1,2 +1,2 @@
 ---
-nhc_ssh_daemon: "sshd"
+nhc_ssh_daemon: "sshd:"

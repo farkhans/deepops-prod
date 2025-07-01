@@ -10,9 +10,10 @@
     - ansible_local['gpus']['count']
     - is_dgx.stat.exists
 
-- name: Modprobe nv_peer_mem
+- name: Modprobe nvidia-peermem
   modprobe:
-    name: nv_peer_mem
+    # name: nv_peer_mem
+    name: nvidia-peermem
     state: present
   when:
     - ansible_local['gpus']['count']

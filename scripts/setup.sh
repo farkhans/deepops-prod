@@ -28,9 +28,9 @@ VENV_DIR="${VENV_DIR:-/opt/deepops/env}"        # Path to python virtual environ
 
 # Set distro-specific variables
 . /etc/os-release
-DEPS_DEB=(git virtualenv python3-virtualenv sshpass wget)
-DEPS_EL7=(git libselinux-python3 python-virtualenv python3-virtualenv sshpass wget)
-DEPS_EL8=(git python3-libselinux python3-virtualenv sshpass wget)
+DEPS_DEB=(git virtualenv python3-virtualenv sshpass wget python3-passlib)
+DEPS_EL7=(git libselinux-python3 python-virtualenv python3-virtualenv sshpass wget python3-passlib)
+DEPS_EL8=(git python3-libselinux python3-virtualenv sshpass wget python3-passlib)
 EPEL_VERSION="$(echo ${VERSION_ID} | sed  's/^[^0-9]*//;s/[^0-9].*$//')"
 EPEL_URL="https://dl.fedoraproject.org/pub/epel/epel-release-latest-${EPEL_VERSION}.noarch.rpm"
 PROXY_USE=`grep -v ^# ${SCRIPT_DIR}/deepops/proxy.sh 2>/dev/null | grep -v ^$ | wc -l`
@@ -59,6 +59,7 @@ as_user(){
     if [ $PROXY_USE -gt 0 ] ; then
         cmd="bash -c '. ${SCRIPT_DIR}/deepops/proxy.sh && $@'"
     else
+        echo "No proxy"
         cmd="bash -c '$@'"
     fi
     eval $cmd
@@ -99,15 +100,15 @@ if command -v virtualenv &> /dev/null ; then
     # Check for any installed ansible pip package
     if pip show ansible 2>&1 >/dev/null; then
         current_version=$(pip show ansible | grep Version | awk '{print $2}')
-	echo "Current version of Ansible is ${current_version}"
-	if "${PYTHON_BIN}" -c "from distutils.version import LooseVersion; print(LooseVersion('$current_version') >= LooseVersion('$ANSIBLE_TOO_NEW'))" | grep True 2>&1 >/dev/null; then
+	    echo "Current version of Ansible is ${current_version}"
+	    if "${PYTHON_BIN}" -c "from distutils.version import LooseVersion; print(LooseVersion('$current_version') >= LooseVersion('$ANSIBLE_TOO_NEW'))" | grep True 2>&1 >/dev/null; then
             echo "Ansible version ${current_version} too new for DeepOps"
-	    echo "Please uninstall any ansible, ansible-base, and ansible-core packages and re-run this script"
-	    exit 1
-	fi
-	if "${PYTHON_BIN}" -c "from distutils.version import LooseVersion; print(LooseVersion('$current_version') < LooseVersion('$ANSIBLE_VERSION'))" | grep True 2>&1 >/dev/null; then
-	    echo "Ansible will be upgraded from ${current_version} to ${ANSIBLE_VERSION}"
-	fi
+	        echo "Please uninstall any ansible, ansible-base, and ansible-core packages and re-run this script"
+	        exit 1
+	    fi
+	    if "${PYTHON_BIN}" -c "from distutils.version import LooseVersion; print(LooseVersion('$current_version') < LooseVersion('$ANSIBLE_VERSION'))" | grep True 2>&1 >/dev/null; then
+	        echo "Ansible will be upgraded from ${current_version} to ${ANSIBLE_VERSION}"
+	    fi
     fi
 
     echo "installing ansible"
@@ -134,7 +135,7 @@ if command -v virtualenv &> /dev/null ; then
         paramiko \
         jmespath \
         MarkupSafe \
-        python-passlib \
+        passlib \
         selinux"
 # Ensure passlib or python-passlib
 
@@ -169,13 +170,19 @@ fi
 # Install Ansible Galaxy roles
 if command -v ansible-galaxy &> /dev/null ; then
     echo "Updating Ansible Galaxy roles..."
+    ansible-galaxy --version
     initial_dir="$(pwd)"
     roles_path="${ROOT_DIR}/roles/galaxy"
     collections_path="${ROOT_DIR}/collections"
 
     cd "${ROOT_DIR}"
-    as_user ansible-galaxy collection install -p "${collections_path}" --force -r "roles/requirements.yml" >/dev/null
-    as_user ansible-galaxy role install -p "${roles_path}" --force -r "roles/requirements.yml" >/dev/null
+    echo "Installing Ansible Galaxy roles to ${roles_path}"
+    echo "Installing Ansible Galaxy collections to ${collections_path}"
+    pwd
+    as_user ansible --version
+    as_user which ansible-galaxy
+    as_user ansible-galaxy collection install -p "${collections_path}"  --force -r "roles/requirements.yml" >/dev/null
+    as_user ansible-galaxy role install -p "${roles_path}" --force  -r "roles/requirements.yml" >/dev/null
 
     # Install any user-defined config requirements
     if [ -d "${CONFIG_DIR}" ] && [ -f "${CONFIG_DIR}/requirement.yml" ] ; then
